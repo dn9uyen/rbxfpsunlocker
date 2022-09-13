@@ -92,6 +92,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				switch (result)
 				{
 				case RFU_TRAYMENU_EXIT:
+                    UnregisterHotKey(NULL, 1);
+                    UnregisterHotKey(NULL, 2);
 					SetFPSCapExternal(60);
 					Shell_NotifyIcon(NIM_DELETE, &NotifyIconData);
 					TerminateThread(WatchThread, 0);
@@ -252,9 +254,25 @@ int UI::Start(HINSTANCE instance, LPTHREAD_START_ROUTINE watchthread)
 	BOOL ret;
 	MSG msg;
 
+    bool hotkey_toggled = false;
+    RegisterHotKey(NULL, 1, MOD_NOREPEAT, 0x58);    //0x42 is 'x'
+    RegisterHotKey(NULL, 2, MOD_NOREPEAT, 0x5A);    //0x42 is 'z'
+
 	while ((ret = GetMessage(&msg, NULL, 0, 0)) != 0)
 	{
-		if (ret != -1)
+        if (msg.message == WM_HOTKEY) 
+        {
+            if (hotkey_toggled)
+            {
+                SetFPSCapExternal(500);
+            }
+            else 
+            {
+                SetFPSCapExternal(15);
+            }
+        }
+		
+        if (ret != -1)
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
