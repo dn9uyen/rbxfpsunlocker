@@ -265,10 +265,12 @@ int UI::Start(HINSTANCE instance, LPTHREAD_START_ROUTINE watchthread)
             if (hotkey_toggled)
             {
                 SetFPSCapExternal(500);
+		hotkey_toggled = false;
             }
             else 
             {
                 SetFPSCapExternal(15);
+		hotkey_toggled = true;
             }
         }
 		
